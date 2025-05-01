@@ -20,6 +20,25 @@ resource "aws_iam_role" "lambda_notifier_exec_role" {
   }) 
 }
 
+resource "aws_iam_policy" "lambda_notifier_policy" {
+  name        = "notifier_policy"
+  description = "IAM policy para función Lambda notifier"
+  policy      = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ],
+        Effect = "Allow"
+        Resource = "arn:aws:logs:*:*:*"
+      }
+    ]
+  })
+}
+
 resource "aws_lambda_function" "notifier" {
   function_name = "notifier"
   handler       = "index.handler"
@@ -27,4 +46,10 @@ resource "aws_lambda_function" "notifier" {
   role          = aws_iam_role.lambda_notifier_exec_role.arn
   filename     = data.archive_file.lambda_notifier.output_path
   source_code_hash = data.archive_file.lambda_notifier.output_base64sha256
+
+  environment {
+    variables = {
+      HELLO = "world"
+    }
+  }
 }

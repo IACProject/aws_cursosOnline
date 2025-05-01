@@ -39,6 +39,11 @@ resource "aws_iam_policy" "lambda_notifier_policy" {
   })
 }
 
+resource "aws_iam_role_policy_attachment" "lambda_notifier_policy_attachment" {
+  role       = aws_iam_role.lambda_notifier_exec_role.name
+  policy_arn = aws_iam_policy.lambda_notifier_policy.arn
+}
+
 resource "aws_lambda_function" "notifier" {
   function_name = "notifier"
   handler       = "index.handler"

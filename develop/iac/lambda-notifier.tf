@@ -84,9 +84,9 @@ resource "aws_ses_email_identity" "sender" {
   email = "vascojekins@gmail.com"
 }
 
-resource "aws_iam_role_policy" "notifier_policy" {
+resource "aws_iam_role_policy" "notifier_ses_policy" {
   name   = "lambda_ses_policy"
-  role   = aws_iam_role.lambda_notifier_exec_role.id
+  role   = aws_iam_role.lambda_notifier_exec_role.name
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -96,7 +96,7 @@ resource "aws_iam_role_policy" "notifier_policy" {
           "ses:SendEmail",
           "ses:SendRawEmail"
         ]
-        Resource = aws_ses_email_identity.sender.arn
+        Resource = "*"
       }
     ]
   })

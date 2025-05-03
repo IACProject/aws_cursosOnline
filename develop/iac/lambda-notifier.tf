@@ -20,44 +20,66 @@ resource "aws_iam_role" "lambda_notifier_exec_role" {
   }) 
 }
 
-resource "aws_iam_policy" "lambda_notifier_policy" {
-  name        = "notifier_policy"
-  description = "IAM policy para función Lambda notifier"
-  policy      = jsonencode({
+resource "aws_iam_role_policy" "lambda_combined_policy" {
+  name = "lambda_combined_policy"
+  role = aws_iam_role.lambda_notifier_exec_role.name
+
+  policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
       {
+        Effect = "Allow"
+        Action = [
+          "dynamodb:PutItem",
+          "dynamodb:GetItem",
+          "dynamodb:UpdateItem",
+          "dynamodb:DeleteItem",
+          "dynamodb:Query",
+          "dynamodb:Scan"
+        ]
+        Resource = aws_dynamodb_table.notifier_table.arn
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "ses:SendEmail",
+          "ses:SendRawEmail"
+        ]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
         Action = [
           "logs:CreateLogGroup",
           "logs:CreateLogStream",
           "logs:PutLogEvents"
-        ],
-        Effect = "Allow"
+        ]
         Resource = "arn:aws:logs:*:*:*"
       }
     ]
   })
 }
 
-resource "aws_iam_role_policy_attachment" "lambda_notifier_policy_attachment" {
-  role       = aws_iam_role.lambda_notifier_exec_role.name
-  policy_arn = aws_iam_policy.lambda_notifier_policy.arn
-}
-
 resource "aws_lambda_function" "notifier" {
-  function_name = "notifier"
-  handler       = "index.handler"
-  runtime       = "nodejs18.x"
-  role          = aws_iam_role.lambda_notifier_exec_role.arn
-  filename     = data.archive_file.lambda_notifier.output_path
+  function_name    = "notifier"
+  handler         = "index.handler"
+  runtime         = "nodejs18.x"
+  role            = aws_iam_role.lambda_notifier_exec_role.arn
+  filename        = data.archive_file.lambda_notifier.output_path
   source_code_hash = data.archive_file.lambda_notifier.output_base64sha256
 
   environment {
     variables = {
-      HELLO = "world"
-      SOURCE_EMAIL = "vascojekins@gmail.com"
+      SOURCE_EMAIL      = "vascojekins@gmail.com"
       DESTINATION_EMAIL = "vascofrann@gmail.com"
+      DYNAMODB_TABLE    = aws_dynamodb_table.notifier_table.name
     }
+  }
+
+  tags = {
+    Name        = "notifier"
+    Environment = "dev"
+    Project     = "cursosonline"
   }
 }
 
@@ -77,27 +99,9 @@ resource "aws_s3_bucket_notification" "bucket_notification" {
     events             = ["s3:ObjectCreated:*"]
   }
 
-    depends_on = [aws_lambda_permission.allow_s3]
+  depends_on = [aws_lambda_permission.allow_s3]
 }
 
 resource "aws_ses_email_identity" "sender" {
   email = "vascojekins@gmail.com"
-}
-
-resource "aws_iam_role_policy" "notifier_ses_policy" {
-  name   = "lambda_ses_policy"
-  role   = aws_iam_role.lambda_notifier_exec_role.name
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "ses:SendEmail",
-          "ses:SendRawEmail"
-        ]
-        Resource = "*"
-      }
-    ]
-  })
 }

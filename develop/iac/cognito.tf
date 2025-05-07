@@ -17,6 +17,44 @@ resource "aws_cognito_user_pool" "cognito_user_pool" {
 
   tags = {
     Name        = "OnlineReady"
-    Environment = "dev"
-  }
+    Environment= "dev" }
+}
+resource "aws_cognito_user_pool_client" "cognito_user_client" {
+  name         = "online-ready-client"
+  user_pool_id = aws_cognito_user_pool.cognito_user_pool.id
+
+  explicit_auth_flows = [
+    "ALLOW_USER_PASSWORD_AUTH",
+    "ALLOW_REFRESH_TOKEN_AUTH",
+    "ALLOW_USER_SRP_AUTH",
+    "ALLOW_ADMIN_USER_PASSWORD_AUTH"
+  ]
+
+  generate_secret = false
+
+  allowed_oauth_flows_user_pool_client = true
+
+  allowed_oauth_flows = ["code", "implicit"]
+
+  allowed_oauth_scopes = [
+    "phone",
+    "email",
+    "openid",
+    "profile",
+    "aws.cognito.signin.user.admin"
+  ]
+
+  callback_urls = [
+    "http://localhost:3000/callback"
+  ]
+
+  logout_urls = [
+    "https://localhost:3000/logout"
+  ]
+
+  supported_identity_providers = ["COGNITO"]
+
+  prevent_user_existence_errors = "ENABLED"
+
+  enable_token_revocation = true
 }

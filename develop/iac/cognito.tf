@@ -58,3 +58,8 @@ resource "aws_cognito_user_pool_client" "cognito_user_client" {
 
   enable_token_revocation = true
 }
+
+resource "aws_cognito_user_pool_domain" "online_ready_domain" {
+  domain       = "online-ready-${dev.environment}"  # Cambia si quieres un dominio personalizado
+  user_pool_id = aws_cognito_user_pool.online_ready_user_pool.id
+}

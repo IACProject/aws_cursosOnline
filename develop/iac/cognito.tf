@@ -17,8 +17,17 @@ resource "aws_cognito_user_pool" "cognito_user_pool" {
 
   tags = {
     Name        = "OnlineReady"
-    Environment= "dev" }
+    Environment = var.environment
+  }
 }
+
+variable "environment" {
+  description = "Ambiente de despliegue"
+  type        = string
+  default     = "dev"
+  
+}
+
 resource "aws_cognito_user_pool_client" "cognito_user_client" {
   name         = "online-ready-client"
   user_pool_id = aws_cognito_user_pool.cognito_user_pool.id
@@ -49,7 +58,7 @@ resource "aws_cognito_user_pool_client" "cognito_user_client" {
   ]
 
   logout_urls = [
-    "https://localhost:3000/logout"
+    "http://localhost:3000/logout"
   ]
 
   supported_identity_providers = ["COGNITO"]
@@ -59,7 +68,22 @@ resource "aws_cognito_user_pool_client" "cognito_user_client" {
   enable_token_revocation = true
 }
 
-resource "aws_cognito_user_pool_domain" "online_ready_domain" {
-  domain       = "online-ready-${dev.environment}"  # Cambia si quieres un dominio personalizado
-  user_pool_id = aws_cognito_user_pool.online_ready_user_pool.id
+resource "aws_cognito_user_pool_domain" "cognito_domain" {
+  domain       = "online-ready-${var.environment}"
+  user_pool_id = aws_cognito_user_pool.cognito_user_pool.id
+}
+
+output "cognito_user_pool_id" {
+  description = "ID del User Pool de Cognito"
+  value       = aws_cognito_user_pool.cognito_user_pool.id
+}
+
+output "cognito_user_pool_client_id" {
+  description = "ID del User Pool Client"
+  value       = aws_cognito_user_pool.cognito_user_pool.id
+}
+
+output "cognito_user_pool_domain" {
+  description = "Dominio del User Pool"
+  value       = aws_cognito_user_pool.cognito_user_pool.id
 }

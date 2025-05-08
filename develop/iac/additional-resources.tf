@@ -85,8 +85,8 @@ resource "aws_lambda_function" "api_handler" {
   handler          = "index.handler"
   runtime          = "nodejs18.x"
   role             = aws_iam_role.api_lambda_exec_role.arn
-  filename         = "c:/Users/USER/Documents/GitHub/aws_cursosOnline/develop/lambda/api-handler.zip"
-  source_code_hash = filebase64sha256("c:/Users/USER/Documents/GitHub/aws_cursosOnline/develop/lambda/api-handler.zip")
+  filename         = "${path.module}/bin/api-handler.zip"
+  source_code_hash = filebase64sha256("${path.module}/bin/api-handler.zip")
 
   environment {
     variables = {

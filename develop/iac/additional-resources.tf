@@ -1,3 +1,8 @@
+# CloudFront Origin Access Identity
+resource "aws_cloudfront_origin_access_identity" "oai" {
+  comment = "Access Identity for CloudFront to access S3 bucket"
+}
+
 # CloudFront Distribution
 resource "aws_cloudfront_distribution" "cdn" {
   origin {
@@ -51,13 +56,13 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
     Version = "2012-10-17",
     Statement = [
       {
-        Sid       = "AllowCloudFrontAccess",
-        Effect    = "Allow",
+        Sid    = "AllowCloudFrontAccess",
+        Effect = "Allow",
         Principal = {
           Service = "cloudfront.amazonaws.com"
         },
-        Action    = "s3:GetObject",
-        Resource  = "${aws_s3_bucket.bucket.arn}/*",
+        Action   = "s3:GetObject",
+        Resource = "${aws_s3_bucket.bucket.arn}/*",
         Condition = {
           StringEquals = {
             "AWS:SourceArn" = aws_cloudfront_distribution.cdn.arn
@@ -80,8 +85,8 @@ resource "aws_lambda_function" "api_handler" {
   handler          = "index.handler"
   runtime          = "nodejs18.x"
   role             = aws_iam_role.api_lambda_exec_role.arn
-  filename         = "path/to/api-handler.zip"
-  source_code_hash = filebase64sha256("path/to/api-handler.zip")
+  filename         = "c:/Users/USER/Documents/GitHub/aws_cursosOnline/develop/lambda/api-handler.zip"
+  source_code_hash = filebase64sha256("c:/Users/USER/Documents/GitHub/aws_cursosOnline/develop/lambda/api-handler.zip")
 
   environment {
     variables = {
@@ -97,7 +102,7 @@ resource "aws_lambda_function" "api_handler" {
 
 # IAM Role for API Lambda
 resource "aws_iam_role" "api_lambda_exec_role" {
-  name               = "api_lambda_exec_role"
+  name = "api_lambda_exec_role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [

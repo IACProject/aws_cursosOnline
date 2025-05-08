@@ -1,7 +1,8 @@
-# Terraform
+node_modules/
+package-lock.json
 .terraform/
 *.tfstate
-*.tfstate.*
+.tfstate.
 crash.log
 *.zip
 *.exe

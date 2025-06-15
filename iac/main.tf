@@ -36,3 +36,9 @@ module "cloudfront" {
   bucket_domain_name = module.s3_web.bucket_domain_name
   bucket_arn         = module.s3_web.bucket_arn
 }
+
+module "s3_web" {
+  source       = "./modules/s3_bucket/s3_web"
+  bucket_name  = "online-ready-web-${var.environment}"
+  environment  = var.environment
+}

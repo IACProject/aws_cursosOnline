@@ -57,8 +57,6 @@ module "lambda_api_handler" {
   role_arn            = module.iam_roles.api_handler_role_arn
   dynamodb_table_name = module.dynamodb_archivos.table_name
   environment         = var.environment
-<<<<<<< Updated upstream
-=======
 }
 
 module "iam_roles" {
@@ -73,5 +71,10 @@ module "lambda_notify" {
   source      = "./modules/lambdas/notify"
   role_arn    = module.iam_roles.lambda_notify_role_arn
   environment = var.environment
->>>>>>> Stashed changes
+}
+
+module "cloudwatch_logs_notify" {
+  source         = "./modules/monitoring/cloudwatch_logs"
+  environment    = var.environment
+  retention_days = 14
 }

@@ -73,9 +73,6 @@ module "lambda_notify" {
   source      = "./modules/lambdas/notify"
   role_arn    = module.iam_roles.lambda_notify_role_arn
   environment = var.environment
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
 }
 
 module "cloudwatch_logs_notify" {
@@ -97,5 +94,65 @@ module "iam_files_messenger" {
   s3_bucket_arn = module.s3_archivos.bucket_arn
   dynamodb_table_arn = module.dynamodb_archivos.table_arn
   rds_instance_arn   = module.rds_usuarios.arn
+<<<<<<< Updated upstream
 >>>>>>> Stashed changes
+=======
+}
+
+# SNS para notificación
+module "sns_files" {
+  source         = "./modules/sns_files"
+  email_receiver = "vascofrann@gmail.com"
+}
+# Módulo para crear tablas DynamoDB
+module "dynamodb" {
+  source      = "./modules/dynamodb"
+}
+
+module "dynamodb_archivos" {
+  source      = "./modules/dynamodb/dynamodb_archivos"
+  environment = var.environment
+}
+
+module "dynamodb_metadatos_cursos" {
+  source      = "./modules//dynamodb/dynamodb_metadatos_cursos"
+  environment = var.environment
+}
+
+module "dynamodb_dax" {
+  source        = "./modules/dynamodb/dynamodb_dax"
+  dax_role_arn  = aws_iam_role.dax_service_role.arn
+  environment   = var.environment
+}
+
+# Crear rol DAX
+resource "aws_iam_role" "dax_service_role" {
+  name = "dax-service-role-${var.environment}"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "dax.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+module "s3_archivos" {
+  source       = "./modules/s3_bucket/s3_archivos"
+  bucket_name  = "online-ready-archivos-${var.environment}"
+  environment  = var.environment
+}
+
+module "lambda_files_manager" {
+  source              = "./modules/lambdas/files_manager"
+  role_arn            = module.iam_lambda_files_manager.role_arn
+  s3_bucket_name      = module.s3_archivos.bucket_name
+  dynamodb_table_name = module.dynamodb_archivos.table_name
+  environment         = var.environment
 }

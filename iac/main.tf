@@ -58,3 +58,11 @@ module "lambda_api_handler" {
   dynamodb_table_name = module.dynamodb_archivos.table_name
   environment         = var.environment
 }
+
+module "iam_roles" {
+  source = "./modules/iam_roles/iam_roles"
+  s3_bucket_arn      = module.s3_archivos.bucket_arn
+  dynamodb_table_arn = module.dynamodb_archivos.table_arn
+  rds_instance_arn   = module.rds_usuarios.arn 
+  environment        = var.environment
+}

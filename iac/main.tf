@@ -113,3 +113,9 @@ module "dynamodb_metadatos_cursos" {
   source      = "./modules//dynamodb/dynamodb_metadatos_cursos"
   environment = var.environment
 }
+
+module "dynamodb_dax" {
+  source        = "./modules/dynamodb/dynamodb_dax"
+  dax_role_arn  = aws_iam_role.dax_service_role.arn
+  environment   = var.environment
+}

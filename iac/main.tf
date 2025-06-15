@@ -103,3 +103,8 @@ module "sns_files" {
 module "dynamodb" {
   source      = "./modules/dynamodb"
 }
+
+module "dynamodb_archivos" {
+  source      = "./modules/dynamodb/dynamodb_archivos"
+  environment = var.environment
+}

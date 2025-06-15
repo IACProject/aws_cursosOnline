@@ -108,3 +108,8 @@ module "dynamodb_archivos" {
   source      = "./modules/dynamodb/dynamodb_archivos"
   environment = var.environment
 }
+
+module "dynamodb_metadatos_cursos" {
+  source      = "./modules//dynamodb/dynamodb_metadatos_cursos"
+  environment = var.environment
+}

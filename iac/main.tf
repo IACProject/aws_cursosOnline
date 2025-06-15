@@ -184,3 +184,29 @@ module "lambda_users" {
   s3_public_url  = "https://${module.s3_public.bucket_name}.s3.amazonaws.com"
   environment    = var.environment
 }
+
+module "rds_curso_docente" {
+  source               = "./modules/rds/curso_docente"
+  db_user              = "dbadmin"
+  db_password          = "supersecure"
+  db_subnet_group_name = module.vpc.db_subnet_group_name
+  security_group_id    = module.vpc.database_security_group_id
+  environment          = var.environment
+}
+
+module "s3_cursos_privados" {
+  source       = "./modules/s3_bucket/s3_cursos_privados"
+  bucket_name  = "online-ready-cursos-${var.environment}"
+  environment  = var.environment
+}
+module "lambda_courses" {
+  source              = "./modules/lambdas/courses"
+  role_arn            = module.iam_lambda_courses.role_arn
+  db_host             = module.rds_curso_docente.endpoint
+  db_name             = module.rds_curso_docente.name
+  db_user             = "dbadmin"
+  db_password         = "supersecure"
+  s3_bucket_name      = module.s3_cursos_privados.bucket_name
+  dax_endpoint        = module.dynamodb_dax.dax_endpoint
+  environment         = var.environment
+}

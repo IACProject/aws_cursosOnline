@@ -42,3 +42,12 @@ module "s3_web" {
   bucket_name  = "online-ready-web-${var.environment}"
   environment  = var.environment
 }
+
+module "api_gateway" {
+  source                      = "./modules/api_gateway"
+  api_name                    = "OnlineReadyAPI"
+  api_description             = "API for interacting with DynamoDB"
+  lambda_notify_invoke_arn    = module.lambda_notify.invoke_arn
+  lambda_notify_function_name = module.lambda_notify.function_name
+  lambda_cursos_invoke_arn    = module.lambda_courses.invoke_arn
+}

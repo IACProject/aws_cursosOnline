@@ -199,6 +199,7 @@ module "s3_cursos_privados" {
   bucket_name  = "online-ready-cursos-${var.environment}"
   environment  = var.environment
 }
+
 module "lambda_courses" {
   source              = "./modules/lambdas/courses"
   role_arn            = module.iam_lambda_courses.role_arn
@@ -209,4 +210,12 @@ module "lambda_courses" {
   s3_bucket_name      = module.s3_cursos_privados.bucket_name
   dax_endpoint        = module.dynamodb_dax.dax_endpoint
   environment         = var.environment
+}
+
+module "iam_lambda_courses" {
+  source        = "./modules/iam_roles/lambda_exec_role"
+  role_name     = "lambda-courses-role"
+  s3_bucket_arn = module.s3_cursos_privados.bucket_arn
+  dynamodb_table_arn = module.dynamodb_metadatos_cursos.table_arn
+  rds_instance_arn   = module.rds_curso_docente.arn
 }

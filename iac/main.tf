@@ -159,3 +159,28 @@ module "iam_lambda_files_manager" {
   dynamodb_table_arn = module.dynamodb_archivos.table_arn
   rds_instance_arn   = module.rds_usuarios.arn
 }
+
+module "rds_usuarios" {
+  source               = "./modules/rds/usuarios"
+  db_user              = "dbadmin"
+  db_password          = "supersecure"
+  db_subnet_group_name = module.vpc.db_subnet_group_name  
+  security_group_id    = module.vpc.database_security_group_id  
+  environment          = var.environment
+}
+module "s3_public" {
+  source       = "./modules/s3_bucket/s3_public"
+  bucket_name  = "online-ready-public-${var.environment}"
+  environment  = var.environment
+}
+
+module "lambda_users" {
+  source         = "./modules/lambdas/users"
+  role_arn       = module.iam_lambda_users.role_arn
+  db_host        = module.rds_usuarios.endpoint
+  db_name        = module.rds_usuarios.name
+  db_user        = "admin"
+  db_password    = "supersecure"
+  s3_public_url  = "https://${module.s3_public.bucket_name}.s3.amazonaws.com"
+  environment    = var.environment
+}

@@ -57,4 +57,21 @@ module "lambda_api_handler" {
   role_arn            = module.iam_roles.api_handler_role_arn
   dynamodb_table_name = module.dynamodb_archivos.table_name
   environment         = var.environment
+<<<<<<< Updated upstream
+=======
+}
+
+module "iam_roles" {
+  source = "./modules/iam_roles/iam_roles"
+  s3_bucket_arn      = module.s3_archivos.bucket_arn
+  dynamodb_table_arn = module.dynamodb_archivos.table_arn
+  rds_instance_arn   = module.rds_usuarios.arn 
+  environment        = var.environment
+}
+
+module "lambda_notify" {
+  source      = "./modules/lambdas/notify"
+  role_arn    = module.iam_roles.lambda_notify_role_arn
+  environment = var.environment
+>>>>>>> Stashed changes
 }

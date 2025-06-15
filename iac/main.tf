@@ -57,8 +57,6 @@ module "lambda_api_handler" {
   role_arn            = module.iam_roles.api_handler_role_arn
   dynamodb_table_name = module.dynamodb_archivos.table_name
   environment         = var.environment
-<<<<<<< Updated upstream
-=======
 }
 
 module "iam_roles" {
@@ -94,9 +92,6 @@ module "iam_files_messenger" {
   s3_bucket_arn = module.s3_archivos.bucket_arn
   dynamodb_table_arn = module.dynamodb_archivos.table_arn
   rds_instance_arn   = module.rds_usuarios.arn
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
 }
 
 # SNS para notificación
@@ -155,4 +150,12 @@ module "lambda_files_manager" {
   s3_bucket_name      = module.s3_archivos.bucket_name
   dynamodb_table_name = module.dynamodb_archivos.table_name
   environment         = var.environment
+}
+
+module "iam_lambda_files_manager" {
+  source             = "./modules/iam_roles/lambda_exec_role"
+  role_name          = "lambda-files-manager-role"
+  s3_bucket_arn      = module.s3_archivos.bucket_arn
+  dynamodb_table_arn = module.dynamodb_archivos.table_arn
+  rds_instance_arn   = module.rds_usuarios.arn
 }

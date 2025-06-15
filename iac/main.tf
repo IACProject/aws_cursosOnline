@@ -51,3 +51,10 @@ module "api_gateway" {
   lambda_notify_function_name = module.lambda_notify.function_name
   lambda_cursos_invoke_arn    = module.lambda_courses.invoke_arn
 }
+
+module "lambda_api_handler" {
+  source              = "./modules/lambdas/api_handler"
+  role_arn            = module.iam_roles.api_handler_role_arn
+  dynamodb_table_name = module.dynamodb_archivos.table_name
+  environment         = var.environment
+}

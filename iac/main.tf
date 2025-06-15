@@ -143,3 +143,34 @@ module "s3_archivos" {
   bucket_name  = "online-ready-archivos-${var.environment}"
   environment  = var.environment
 }
+
+module "lambda_files_manager" {
+  source              = "./modules/lambdas/files_manager"
+  role_arn            = module.iam_lambda_files_manager.role_arn
+  s3_bucket_name      = module.s3_archivos.bucket_name
+  dynamodb_table_name = module.dynamodb_archivos.table_name
+  environment         = var.environment
+}
+
+module "iam_lambda_files_manager" {
+  source             = "./modules/iam_roles/lambda_exec_role"
+  role_name          = "lambda-files-manager-role"
+  s3_bucket_arn      = module.s3_archivos.bucket_arn
+  dynamodb_table_arn = module.dynamodb_archivos.table_arn
+  rds_instance_arn   = module.rds_usuarios.arn
+}
+
+module "rds_usuarios" {
+  source               = "./modules/rds/usuarios"
+  db_user              = "dbadmin"
+  db_password          = "supersecure"
+  db_subnet_group_name = module.vpc.db_subnet_group_name  
+  security_group_id    = module.vpc.database_security_group_id  
+  environment          = var.environment
+}
+
+module "s3_public" {
+  source       = "./modules/s3_bucket/s3_public"
+  bucket_name  = "online-ready-public-${var.environment}"
+  environment  = var.environment
+}

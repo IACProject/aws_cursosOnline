@@ -227,3 +227,13 @@ module "iam_lambda_users" {
   dynamodb_table_arn = module.dynamodb_archivos.table_arn
   rds_instance_arn   = module.rds_usuarios.arn
 }
+
+module "vpc" {
+  source                     = "./modules/vpc"
+  cidr_block                 = "10.0.0.0/16"
+  public_subnet_cidr         = "10.0.1.0/24"
+  private_subnet_cidr        = "10.0.2.0/24"
+  availability_zone          = "us-east-2a"
+  private_availability_zone  = "us-east-2b"
+  environment                = var.environment
+}

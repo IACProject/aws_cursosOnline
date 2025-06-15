@@ -219,3 +219,11 @@ module "iam_lambda_courses" {
   dynamodb_table_arn = module.dynamodb_metadatos_cursos.table_arn
   rds_instance_arn   = module.rds_curso_docente.arn
 }
+
+module "iam_lambda_users" {
+  source        = "./modules/iam_roles/lambda_exec_role"
+  role_name     = "lambda-users-role"
+  s3_bucket_arn = module.s3_public.bucket_arn
+  dynamodb_table_arn = module.dynamodb_archivos.table_arn
+  rds_instance_arn   = module.rds_usuarios.arn
+}

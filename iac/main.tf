@@ -78,3 +78,9 @@ module "cloudwatch_logs_notify" {
   environment    = var.environment
   retention_days = 14
 }
+
+# SQS
+module "sqs_files" {
+  source = "./modules/sqs_files"
+  environment = var.environment
+}

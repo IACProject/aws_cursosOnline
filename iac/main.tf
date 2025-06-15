@@ -99,3 +99,7 @@ module "sns_files" {
   source         = "./modules/sns_files"
   email_receiver = "vascofrann@gmail.com"
 }
+# Módulo para crear tablas DynamoDB
+module "dynamodb" {
+  source      = "./modules/dynamodb"
+}

@@ -119,3 +119,21 @@ module "dynamodb_dax" {
   dax_role_arn  = aws_iam_role.dax_service_role.arn
   environment   = var.environment
 }
+
+# Crear rol DAX
+resource "aws_iam_role" "dax_service_role" {
+  name = "dax-service-role-${var.environment}"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "dax.amazonaws.com"
+        }
+      }
+    ]
+  })
+}

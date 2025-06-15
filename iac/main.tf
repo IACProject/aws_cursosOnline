@@ -159,3 +159,12 @@ module "iam_lambda_files_manager" {
   dynamodb_table_arn = module.dynamodb_archivos.table_arn
   rds_instance_arn   = module.rds_usuarios.arn
 }
+
+module "rds_usuarios" {
+  source               = "./modules/rds/usuarios"
+  db_user              = "dbadmin"
+  db_password          = "supersecure"
+  db_subnet_group_name = module.vpc.db_subnet_group_name
+  security_group_id    = module.vpc.database_security_group_id
+  environment          = var.environment
+}

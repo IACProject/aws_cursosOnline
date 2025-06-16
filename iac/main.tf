@@ -99,3 +99,41 @@ module "sns_files" {
   source         = "./modules/sns_files"
   email_receiver = "vascofrann@gmail.com"
 }
+# Módulo para crear tablas DynamoDB
+module "dynamodb" {
+  source      = "./modules/dynamodb"
+}
+
+module "dynamodb_archivos" {
+  source      = "./modules/dynamodb/dynamodb_archivos"
+  environment = var.environment
+}
+
+module "dynamodb_metadatos_cursos" {
+  source      = "./modules//dynamodb/dynamodb_metadatos_cursos"
+  environment = var.environment
+}
+
+module "dynamodb_dax" {
+  source        = "./modules/dynamodb/dynamodb_dax"
+  dax_role_arn  = aws_iam_role.dax_service_role.arn
+  environment   = var.environment
+}
+
+# Crear rol DAX
+resource "aws_iam_role" "dax_service_role" {
+  name = "dax-service-role-${var.environment}"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "dax.amazonaws.com"
+        }
+      }
+    ]
+  })
+}

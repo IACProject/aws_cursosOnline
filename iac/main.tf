@@ -237,3 +237,20 @@ module "vpc" {
   private_availability_zone  = "us-east-2b"
   environment                = var.environment
 }
+
+module "endpoints" {
+  source = "./modules/endpoints"
+
+  # API Gateway existente
+  api_id                              = module.api_gateway.api_id
+  parent_id                           = module.api_gateway.root_resource_id
+  api_execution_arn                   = module.api_gateway.execution_arn 
+  
+  # Funciones Lambda
+  lambda_cursos_invoke_arn            = module.lambda_courses.invoke_arn
+  lambda_users_invoke_arn             = module.lambda_users.invoke_arn
+  lambda_files_manager_invoke_arn     = module.lambda_files_manager.invoke_arn
+  lambda_cursos_function_name         = module.lambda_courses.function_name
+  lambda_users_function_name          = module.lambda_users.function_name
+  lambda_files_manager_function_name  = module.lambda_files_manager.function_name
+}

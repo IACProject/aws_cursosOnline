@@ -8,7 +8,7 @@ resource "aws_api_gateway_method" "notify_post" {
   rest_api_id   = aws_api_gateway_rest_api.api.id
   resource_id   = aws_api_gateway_resource.notify_resource.id
   http_method   = "POST"
-  authorization = "NONE"
+  authorization = "AWS_IAM" # Use AWS_IAM for IAM-based authorization
 }
 
 resource "aws_api_gateway_integration" "notify_post_integration" {

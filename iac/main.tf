@@ -66,30 +66,3 @@ module "iam_roles" {
   rds_instance_arn   = module.rds_usuarios.arn 
   environment        = var.environment
 }
-
-module "lambda_notify" {
-  source      = "./modules/lambdas/notify"
-  role_arn    = module.iam_roles.lambda_notify_role_arn
-  environment = var.environment
-}
-
-module "cloudwatch_logs_notify" {
-  source         = "./modules/monitoring/cloudwatch_logs"
-  environment    = var.environment
-  retention_days = 14
-}
-
-# SQS
-module "sqs_files" {
-  source = "./modules/sqs_files"
-  environment = var.environment
-}
-
-# Lambda Files Messenger 
-module "iam_files_messenger" {
-  source        = "./modules/iam_roles/lambda_exec_role"
-  role_name     = "lambda-files-messenger-role"
-  s3_bucket_arn = module.s3_archivos.bucket_arn
-  dynamodb_table_arn = module.dynamodb_archivos.table_arn
-  rds_instance_arn   = module.rds_usuarios.arn
-}

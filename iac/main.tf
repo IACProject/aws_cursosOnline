@@ -28,3 +28,11 @@ module "cognito" {
   callback_urls = ["http://localhost:3000/callback"]
   logout_urls   = ["http://localhost:3000/logout"]
 }
+
+module "cloudfront" {
+  source             = "./modules/cloudfront"
+  environment        = var.environment
+  bucket_name        = module.s3_web.bucket_name
+  bucket_domain_name = module.s3_web.bucket_domain_name
+  bucket_arn         = module.s3_web.bucket_arn
+}

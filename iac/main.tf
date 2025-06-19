@@ -199,3 +199,41 @@ module "s3_cursos_privados" {
   bucket_name  = "online-ready-cursos-${var.environment}"
   environment  = var.environment
 }
+
+module "lambda_courses" {
+  source              = "./modules/lambdas/courses"
+  role_arn            = module.iam_lambda_courses.role_arn
+  db_host             = module.rds_curso_docente.endpoint
+  db_name             = module.rds_curso_docente.name
+  db_user             = "dbadmin"
+  db_password         = "supersecure"
+  s3_bucket_name      = module.s3_cursos_privados.bucket_name
+  dax_endpoint        = module.dynamodb_dax.dax_endpoint
+  environment         = var.environment
+}
+
+module "iam_lambda_courses" {
+  source        = "./modules/iam_roles/lambda_exec_role"
+  role_name     = "lambda-courses-role"
+  s3_bucket_arn = module.s3_cursos_privados.bucket_arn
+  dynamodb_table_arn = module.dynamodb_metadatos_cursos.table_arn
+  rds_instance_arn   = module.rds_curso_docente.arn
+}
+
+module "iam_lambda_users" {
+  source        = "./modules/iam_roles/lambda_exec_role"
+  role_name     = "lambda-users-role"
+  s3_bucket_arn = module.s3_public.bucket_arn
+  dynamodb_table_arn = module.dynamodb_archivos.table_arn
+  rds_instance_arn   = module.rds_usuarios.arn
+}
+
+module "vpc" {
+  source                     = "./modules/vpc"
+  cidr_block                 = "10.0.0.0/16"
+  public_subnet_cidr         = "10.0.1.0/24"
+  private_subnet_cidr        = "10.0.2.0/24"
+  availability_zone          = "us-east-2a"
+  private_availability_zone  = "us-east-2b"
+  environment                = var.environment
+}

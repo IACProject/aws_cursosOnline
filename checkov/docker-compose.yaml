@@ -1,0 +1,14 @@
+services:
+  checkov:
+    image: bridgecrew/checkov:latest
+    container_name: checkov_analysis
+    volumes:
+      - ../iac:/app                                        
+      - ./checkov-reports:/output                         
+    working_dir: /app                                   
+    command: [
+      "--directory", "/app",                              
+      "-o", "junitxml",                                    
+      "--output-file-path", "/output/checkov-report.xml", 
+      "--compact"
+    ]

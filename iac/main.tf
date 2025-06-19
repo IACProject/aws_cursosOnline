@@ -253,4 +253,5 @@ module "endpoints" {
   lambda_cursos_function_name         = module.lambda_courses.function_name
   lambda_users_function_name          = module.lambda_users.function_name
   lambda_files_manager_function_name  = module.lambda_files_manager.function_name
+
 }

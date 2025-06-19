@@ -50,6 +50,7 @@ module "api_gateway" {
   lambda_notify_invoke_arn    = module.lambda_notify.invoke_arn
   lambda_notify_function_name = module.lambda_notify.function_name
   lambda_cursos_invoke_arn    = module.lambda_courses.invoke_arn
+
 }
 
 module "lambda_api_handler" {
